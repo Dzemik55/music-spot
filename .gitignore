@@ -1,4 +1,4 @@
-# Ogólne wykluczenia
+# General
 node_modules/
 *.log
 .DS_Store
@@ -6,12 +6,15 @@ node_modules/
 # Backend
 backend/target/
 backend/.mvn/
+/backend/.env
 
 # Frontend
 frontend/node_modules/
 frontend/build/
+/frontend/.env
 
-# Systemowe
+# System
 .idea/
 .vscode/
 *.iml
+.env
