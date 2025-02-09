@@ -1,43 +1,13 @@
 import React from "react";
 import {useAuth} from "../contexts/AuthContext.tsx";
-import {Box, Button, FormControl, FormLabel, Stack, styled, TextField, Typography} from "@mui/material";
-import MuiCard from '@mui/material/Card';
+import {Box, Button, FormControl, FormLabel, TextField, Typography} from "@mui/material";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {api} from "../api/api.ts";
 import {useNavigate} from "react-router-dom";
+import {AuthContainer, Card} from "../components/styled/Styled.ts";
+import {LoginRequest} from "../types/Auth.ts";
+import { useLocation } from "react-router-dom";
 
-type LoginInputs = {
-    usernameOrEmail: string,
-    password: string
-}
-
-const Card = styled(MuiCard)(({theme}) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    alignSelf: 'center',
-    width: '100%',
-    padding: theme.spacing(4),
-    gap: theme.spacing(2),
-    margin: 'auto',
-    [theme.breakpoints.up('sm')]: {
-        maxWidth: '450px',
-    },
-    boxShadow:
-        'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-    ...theme.applyStyles('dark', {
-        boxShadow:
-            'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-    }),
-}));
-
-const SignInContainer = styled(Stack)(({theme}) => ({
-    // height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
-    minHeight: '100%',
-    padding: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
-        padding: theme.spacing(4),
-    },
-}));
 
 export const Login: React.FC = () => {
     const {login} = useAuth();
@@ -45,10 +15,12 @@ export const Login: React.FC = () => {
         register,
         handleSubmit,
         formState: {errors},
-    } = useForm<LoginInputs>()
+    } = useForm<LoginRequest>()
     const navigate = useNavigate();
+    const location = useLocation();
+    const message = location.state?.message;
 
-    const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
+    const onSubmit: SubmitHandler<LoginRequest> = async (data) => {
         try {
             const response = await api.authenticate(data);
             login(data.usernameOrEmail, data.password, response.data);
@@ -58,7 +30,8 @@ export const Login: React.FC = () => {
         }
     }
     return (
-        <SignInContainer direction="column" justifyContent="space-between">
+        <AuthContainer direction="column" justifyContent="space-between">
+            {message && <div className="success-message">{message}</div>}
             <Card variant="outlined">
                 <Typography
                     component="h1"
@@ -113,6 +86,6 @@ export const Login: React.FC = () => {
                     </Button>
                 </Box>
             </Card>
-        </SignInContainer>
+        </AuthContainer>
     );
 }
